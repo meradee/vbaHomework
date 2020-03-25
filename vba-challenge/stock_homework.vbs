@@ -17,8 +17,9 @@ summary_count = 2
 'Last row of the data worksheet
 FinalRow = Cells(Rows.Count, 1).End(xlUp).Row
 
-Range("I1").Value = "Ticker"
-Range("J1").Value = "Volume"
+'Naming
+ws.Range("I1").Value = "Ticker"
+ws.Range("J1").Value = "Total Stock Volume"
 
 'For loop
 For i = 2 To FinalRow
@@ -46,5 +47,61 @@ Else
 End If
 
  Next i
+ 
+
+'Define Variables ----------------------Second Part------------------------
+Dim opening_price As Double
+Dim closing_price As Double
+
+Dim yearly_change As Double
+Dim percent_change As Double
+
+'Row start on 2
+summary_count = 2
+
+'Cell of opening price begins at here
+opening_price = ws.Range("C2").Value
+
+'Naming
+ws.Range("K1").Value = "Yearly Change"
+ws.Range("L1").Value = "Percent Change"
+
+'For loop finding yearly change and percent change
+For i = 3 To FinalRow
+
+If (Cells(i, 1).Value <> Cells(i + 1, 1).Value) Then
+
+'Define closing price value
+closing_price = Cells(i, 6).Value
+
+'Calculate yearly change
+yearly_change = closing_price - opening_price
+
+'Calculate percent change
+If opening_price <> 0 Then
+ percent_change = yearly_change / opening_price
+Else
+ percent_change = 0
+End If
+
+'Format percent change to percentage
+ws.Range("L" & summary_count).NumberFormat = "0.00%"
+
+'Prints in cell
+ws.Range("K" & summary_count).Value = yearly_change
+ws.Range("L" & summary_count).Value = percent_change
+
+'Colors red and green for yearly change
+If yearly_change >= 0 Then
+ws.Range("K" & summary_count).Interior.ColorIndex = 4
+Else
+ws.Range("K" & summary_count).Interior.ColorIndex = 3
+End If
+
+summary_count = summary_count + 1
+
+End If
+ Next i
+
  Next ws
 End Sub
